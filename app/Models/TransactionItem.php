@@ -23,6 +23,6 @@ class TransactionItem extends Model
 
     public function service()
     {
-        return $this->hasMany(Service::class, 'id', 'services_id');
+        return $this->hasOne(Service::class, 'id', 'services_id');
     }
 }
