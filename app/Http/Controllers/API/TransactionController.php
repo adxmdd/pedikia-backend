@@ -43,4 +43,33 @@ class TransactionController extends Controller
             'Data list transaksi berhasil diambil',
         );
     }
+
+    public function checkout(Request $request) {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'exists:services,id',
+            'total_price' => 'required',
+            'extra_price' => 'required',
+            'status' => 'required|in:PENDING,SUCCESS,CANCELLED,FAILED'
+        ]);
+
+        $transaction = Transaction::create([
+            'users_id' => Auth::user()->id,
+            'address' => $request->address,
+            'total_price' => $request->total_price,
+            'extra_price' => $request->extra_price,
+            'status' => $request->status
+        
+        ]);
+
+        foreach ($request->items as $service) {
+            TransactionItem::create([
+                'users_id' => Auth::user()->id,
+                '$services_id' =>$service['id'],
+                'transactions_id' => $transaction->id,
+                'quantity' => $service['quantity']
+            ]);
+        }
+        return ResponseFormatter::success($transaction->load('items.service'), 'Transaksi berhasil');
+    }
 }
