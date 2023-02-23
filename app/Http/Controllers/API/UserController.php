@@ -117,4 +117,13 @@ class UserController extends Controller
             'Data profile user berhasil diambil'
         );
     }
+
+    public function updateProfile(Request $request){
+        $data = $request->all();
+
+        $user = Auth::user();
+        $user->update($data);
+
+        return ResponseFormatter::success($user, 'Profile Updated');
+    }
 }
