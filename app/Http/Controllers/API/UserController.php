@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Rules\Password;
 
 class UserController extends Controller
@@ -16,15 +17,22 @@ class UserController extends Controller
     public function register(Request $request)
     {
         try {
-            $request->validate(
-                [
-                    'name' => ['required', 'string', 'max:255'],
-                    'username' => ['required', 'string', 'max:255', 'unique:users'],
-                    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                    'nullable' => ['required', 'string', 'max:255'],
-                    'password' => ['required', 'string', new Password],
-                ]
-            );
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+                'username' => ['required', 'string', 'max:255', 'unique:users'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                'phone' => ['nullable', 'string', 'max:255'],
+                'password' => ['required', 'string', new Password],
+            ]);
+            // $request->validate(
+            //     [
+            //         'name' => ['required', 'string', 'max:255'],
+            //         'username' => ['required', 'string', 'max:255', 'unique:users'],
+            //         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            //         'phone' => ['nullable', 'string', 'max:255'],
+            //         'password' => ['required', 'string', new Password],
+            //     ]
+            // );
 
             User::create(
                 [
@@ -48,6 +56,9 @@ class UserController extends Controller
                 ],
                 'User Registered'
             );
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
         } catch (Exception $error) {
             return ResponseFormatter::error(
                 [
