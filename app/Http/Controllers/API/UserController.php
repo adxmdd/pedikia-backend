@@ -21,7 +21,8 @@ class UserController extends Controller
                 'name' => ['required', 'string', 'max:255'],
                 'username' => ['required', 'string', 'max:255', 'unique:users'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'phone' => ['nullable', 'string', 'max:255'],
+                'phone' => ['required', 'string', 'max:255'],
+                'roles' => ['required', 'string', 'max:255'],
                 'password' => ['required', 'string', new Password],
             ]);
             // $request->validate(
@@ -40,6 +41,7 @@ class UserController extends Controller
                     'username' => $request->username,
                     'email' => $request->email,
                     'phone' => $request->phone,
+                    'roles' => $request->roles,
                     'password' => Hash::make($request->password),
                 ]
             );
@@ -75,7 +77,7 @@ class UserController extends Controller
     {
         try {
             $request->validate([
-                'email' => 'emailrequired',
+                'email' => 'email|required',
                 'password' => 'required'
             ]);
 
