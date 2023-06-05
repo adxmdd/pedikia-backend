@@ -61,9 +61,7 @@ class TransactionController extends Controller
             'total_price' => $request->total_price,
             'extra_price' => $request->extra_price,
             'status' => $request->status
-
         ]);
-
         foreach ($request->items as $service) {
             TransactionItem::create([
                 'users_id' => Auth::user()->id,
